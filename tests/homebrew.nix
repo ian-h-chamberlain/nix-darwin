@@ -70,6 +70,10 @@ in
     "whalebrew/wget"
   ];
 
+  homebrew.vscodes = [
+    "jnoortheen.nix-ide"
+  ];
+
   test = ''
     bf=${lib.escapeShellArg config.homebrew.brewfile}
 
@@ -97,5 +101,8 @@ in
 
     echo "checking whalebrew entries in Brewfile" >&2
     ${mkTest "whalebrew/wget" ''whalebrew "whalebrew/wget"''}
+
+    echo "checking vscode entries in Brewfile" >&2
+    ${mkTest "jnoortheen.nix-ide" ''vscode "jnoortheen.nix-ide"''}
   '';
 }

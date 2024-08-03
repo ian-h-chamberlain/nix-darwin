@@ -539,9 +539,9 @@ in
       [website](https://brew.sh) for installation instructions.
 
       Use the [](#opt-homebrew.brews), [](#opt-homebrew.casks),
-      [](#opt-homebrew.masApps), and [](#opt-homebrew.whalebrews) options
-      to list the Homebrew formulae, casks, Mac App Store apps, and Docker containers you'd like to
-      install. Use the [](#opt-homebrew.taps) option, to make additional formula
+      [](#opt-homebrew.masApps), [](#opt-homebrew.whalebrews), and [](#opt-homebrew.vscodes) options
+      to list the Homebrew formulae, casks, Mac App Store apps, Docker containers, and VSCode extensions
+      you'd like to install. Use the [](#opt-homebrew.taps) option, to make additional formula
       repositories available to Homebrew. This module uses those options (along with the
       [](#opt-homebrew.caskArgs) options) to generate a Brewfile that
       {command}`nix-darwin` passes to the {command}`brew bundle` command during
@@ -734,6 +734,18 @@ in
       '';
     };
 
+    vscodes = mkOption {
+      type = with types; listOf str;
+      default = [ ];
+      example = [ "jnoortheen.nix-ide" ];
+      description = ''
+        List of VSCode extensions to install using {command}`code`.
+
+        Note that this requires `visual-studio-code` to be installed
+        via [](#opt-homebrew.casks) or another way (e.g. `pkgs.vscode`).
+      '';
+    };
+
     extraConfig = mkOption {
       type = types.lines;
       default = "";
@@ -778,6 +790,7 @@ in
       + mkBrewfileSectionString "Mac App Store apps"
         (mapAttrsToList (n: id: ''mas "${n}", id: ${toString id}'') cfg.masApps)
       + mkBrewfileSectionString "Docker containers" (map (v: ''whalebrew "${v}"'') cfg.whalebrews)
+      + mkBrewfileSectionString "VSCode extensions" (map (v: ''vscode "${v}"'') cfg.vscodes)
       + optionalString (cfg.extraConfig != "") ("# Extra config\n" + cfg.extraConfig);
 
     environment.variables = mkIf cfg.enable cfg.global.homebrewEnvironmentVariables;
